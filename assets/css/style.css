@@ -84,3 +84,31 @@ body {
     cursor: not-allowed;
     filter: grayscale(100%);
 }
+
+.hidden {
+    display: none !important;
+}
+
+#game-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.back-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: all var(--transition-speed);
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
