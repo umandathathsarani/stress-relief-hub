@@ -1,6 +1,30 @@
 import Game from '../../core/Game.js';
 import { playSliceSound } from '../../utils/audio.js';
 
+class FloatingText {
+    constructor(x, y, text) {
+        this.x = x;
+        this.y = y;
+        this.text = text;
+        this.life = 1.0;
+        this.speedY = -1.5;
+    }
+
+    update() {
+        this.y += this.speedY;
+        this.life -= 0.02;
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+        ctx.textAlign = 'center';
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+    }
+}
+
 class Spark {
     constructor(x, y, hue) {
         this.x = x;
@@ -121,9 +145,11 @@ export default class ZenSlicer extends Game {
         this.ctx = this.canvas.getContext('2d');
         this.targets = [];
         this.sparks = [];
+        this.floatingTexts = [];
         this.mouse = { x: 0, y: 0, isDown: false, path: [] };
         this.handleResize = this.resize.bind(this);
         this.spawnTimer = 0;
+        this.score = 0;
     }
 
     start() {
@@ -187,6 +213,9 @@ export default class ZenSlicer extends Game {
             if (dist < target.radius) {
                 target.slice();
                 playSliceSound();
+                this.score++;
+                
+                this.floatingTexts.push(new FloatingText(target.x, target.y, "+1"));
                 
                 for (let i = 0; i < 15; i++) {
                     this.sparks.push(new Spark(target.x, target.y, target.hue));
@@ -217,17 +246,34 @@ export default class ZenSlicer extends Game {
                 this.sparks.splice(i, 1);
             }
         }
+
+        for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+            this.floatingTexts[i].update();
+            if (this.floatingTexts[i].life <= 0) {
+                this.floatingTexts.splice(i, 1);
+            }
+        }
     }
 
     draw() {
         this.ctx.fillStyle = '#1a1a24';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        this.ctx.font = 'bold 150px sans-serif';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(this.score, this.canvas.width / 2, this.canvas.height / 2);
+        this.ctx.restore();
+
         this.targets.forEach(target => target.draw(this.ctx));
         
         this.ctx.globalCompositeOperation = 'lighter';
         this.sparks.forEach(spark => spark.draw(this.ctx));
         this.ctx.globalCompositeOperation = 'source-over';
+        
+        this.floatingTexts.forEach(text => text.draw(this.ctx));
 
         if (this.mouse.isDown && this.mouse.path.length > 1) {
             this.ctx.beginPath();
