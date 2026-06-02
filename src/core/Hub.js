@@ -1,4 +1,5 @@
 import BubbleWrap from '../games/bubble-wrap/BubbleWrap.js';
+import ZenGarden from '../games/zen-garden/ZenGarden.js';
 
 class Hub {
     constructor() {
@@ -46,6 +47,9 @@ class Hub {
 
         if (gameId === 'bubble-wrap') {
             this.activeGameInstance = new BubbleWrap('active-game');
+            this.activeGameInstance.start();
+        } else if (gameId === 'zen-garden') {
+            this.activeGameInstance = new ZenGarden('active-game');
             this.activeGameInstance.start();
         }
     }
