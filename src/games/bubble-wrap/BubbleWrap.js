@@ -45,7 +45,8 @@ export default class BubbleWrap extends Game {
             <p>You have a bubble wrap session in progress.</p>
             <div class="modal-actions">
                 <button id="btn-resume" class="btn-primary">Resume</button>
-                <button id="btn-restart" class="back-btn">Start Over</button>
+                
+                <button id="btn-restart" class="btn-secondary">Start Over</button> 
             </div>
         `;
         
