@@ -8,23 +8,79 @@ class Target {
         this.radius = Math.random() * 20 + 30;
         this.speedX = (Math.random() - 0.5) * 4;
         this.speedY = -(Math.random() * 3 + 5);
-        this.gravity = 0.05;
+        this.gravity = 0.1;
         this.sliced = false;
         this.hue = Math.floor(Math.random() * 360);
+        
+        this.half1 = { x: 0, y: 0, speedX: 0, speedY: 0, angle: 0 };
+        this.half2 = { x: 0, y: 0, speedX: 0, speedY: 0, angle: 0 };
+    }
+
+    slice() {
+        this.sliced = true;
+        
+        this.half1 = {
+            x: this.x,
+            y: this.y,
+            speedX: this.speedX - 2,
+            speedY: this.speedY - 1,
+            angle: 0
+        };
+        
+        this.half2 = {
+            x: this.x,
+            y: this.y,
+            speedX: this.speedX + 2,
+            speedY: this.speedY + 1,
+            angle: 0
+        };
     }
 
     update() {
-        this.speedY += this.gravity;
-        this.x += this.speedX;
-        this.y += this.speedY;
+        if (!this.sliced) {
+            this.speedY += this.gravity;
+            this.x += this.speedX;
+            this.y += this.speedY;
+        } else {
+            this.half1.speedY += this.gravity;
+            this.half1.x += this.half1.speedX;
+            this.half1.y += this.half1.speedY;
+            this.half1.angle -= 0.05;
+
+            this.half2.speedY += this.gravity;
+            this.half2.x += this.half2.speedX;
+            this.half2.y += this.half2.speedY;
+            this.half2.angle += 0.05;
+        }
     }
 
     draw(ctx) {
-        if (this.sliced) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${this.hue}, 70%, 60%)`;
-        ctx.fill();
+        if (!this.sliced) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${this.hue}, 70%, 60%)`;
+            ctx.fill();
+        } else {
+            ctx.fillStyle = `hsl(${this.hue}, 70%, 60%)`;
+
+            ctx.save();
+            ctx.translate(this.half1.x, this.half1.y);
+            ctx.rotate(this.half1.angle);
+            ctx.beginPath();
+            ctx.arc(0, 0, this.radius, Math.PI * 0.5, Math.PI * 1.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            ctx.save();
+            ctx.translate(this.half2.x, this.half2.y);
+            ctx.rotate(this.half2.angle);
+            ctx.beginPath();
+            ctx.arc(0, 0, this.radius, Math.PI * 1.5, Math.PI * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
     }
 }
 
@@ -92,14 +148,13 @@ export default class ZenSlicer extends Game {
 
     checkCollisions() {
         if (this.mouse.path.length < 2) return;
-        const p1 = this.mouse.path[this.mouse.path.length - 2];
         const p2 = this.mouse.path[this.mouse.path.length - 1];
 
         this.targets.forEach(target => {
             if (target.sliced) return;
             const dist = Math.hypot(target.x - p2.x, target.y - p2.y);
             if (dist < target.radius) {
-                target.sliced = true;
+                target.slice();
                 playSliceSound();
             }
         });
@@ -113,7 +168,11 @@ export default class ZenSlicer extends Game {
 
         for (let i = this.targets.length - 1; i >= 0; i--) {
             this.targets[i].update();
-            if (this.targets[i].y > this.canvas.height + 100 || this.targets[i].sliced) {
+            
+            const target = this.targets[i];
+            if (!target.sliced && target.y > this.canvas.height + 100) {
+                this.targets.splice(i, 1);
+            } else if (target.sliced && (target.half1.y > this.canvas.height + 100 && target.half2.y > this.canvas.height + 100)) {
                 this.targets.splice(i, 1);
             }
         }
