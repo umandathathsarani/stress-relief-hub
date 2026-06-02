@@ -168,9 +168,11 @@ export default class ZenSlicer extends Game {
     }
 
     resize() {
-        const rect = this.container.getBoundingClientRect();
-        this.canvas.width = Math.min(rect.width, 1000);
-        this.canvas.height = Math.min(window.innerHeight * 0.7, 600);
+        setTimeout(() => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width || (window.innerWidth * 0.8);
+            this.canvas.height = rect.height || (window.innerHeight * 0.7);
+        }, 10);
     }
 
     setupInteractions() {

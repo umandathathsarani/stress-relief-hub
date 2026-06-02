@@ -1,5 +1,6 @@
 import BubbleWrap from '../games/bubble-wrap/BubbleWrap.js';
 import ZenGarden from '../games/zen-garden/ZenGarden.js';
+import ZenSlicer from '../games/zen-slicer/ZenSlicer.js';
 
 class Hub {
     constructor() {
@@ -17,7 +18,7 @@ class Hub {
             if (!card || card.classList.contains('locked')) return; 
 
             const gameId = card.dataset.game;
-            window.location.hash = gameId;
+            window.location.hash = gameId; 
         });
 
         this.backBtn.addEventListener('click', () => {
@@ -47,9 +48,13 @@ class Hub {
 
         if (gameId === 'bubble-wrap') {
             this.activeGameInstance = new BubbleWrap('active-game');
-            this.activeGameInstance.start();
         } else if (gameId === 'zen-garden') {
             this.activeGameInstance = new ZenGarden('active-game');
+        } else if (gameId === 'zen-slicer') {
+            this.activeGameInstance = new ZenSlicer('active-game');
+        }
+
+        if (this.activeGameInstance) {
             this.activeGameInstance.start();
         }
     }
