@@ -5,11 +5,12 @@ class Particle {
         this.x = x;
         this.y = y;
         this.size = Math.random() * 6 + 2; 
-
+        
         this.speedX = Math.random() * 1 - 0.5;
         this.speedY = Math.random() * -1 - 0.5; 
         this.life = 1.0; 
-        this.decay = Math.random() * 0.015 + 0.005; 
+        this.decay = Math.random() * 0.015 + 0.005;
+        
         this.angle = Math.random() * Math.PI * 2;
         this.spin = (Math.random() - 0.5) * 0.1; 
         
@@ -19,10 +20,8 @@ class Particle {
 
     update() {
         this.angle += this.spin;
-
         this.x += this.speedX + Math.sin(this.angle) * 0.8;
         this.y += this.speedY;
-        
         this.life -= this.decay;
     }
 
@@ -30,7 +29,7 @@ class Particle {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
-        ctx.shadowBlur = 15; // Increased glow
+        ctx.shadowBlur = 15;
         ctx.shadowColor = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
         ctx.fill();
     }
@@ -42,9 +41,7 @@ export default class ZenGarden extends Game {
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
-
         this.mouse = { x: null, y: null, isDrawing: false };
-        
         this.handleResize = this.resize.bind(this);
     }
 
@@ -52,7 +49,6 @@ export default class ZenGarden extends Game {
         super.start();
         this.initCanvas();
         window.addEventListener('resize', this.handleResize);
-
         this.setupInteractions();
     }
 
@@ -69,9 +65,9 @@ export default class ZenGarden extends Game {
     }
 
     resize() {
-        const rect = this.container.getBoundingClientRect();
-        this.canvas.width = Math.min(rect.width, 1000);
-        this.canvas.height = Math.min(window.innerHeight * 0.7, 600);
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
     }
 
     setupInteractions() {
@@ -103,7 +99,6 @@ export default class ZenGarden extends Game {
     update() {
         for (let i = 0; i < this.particles.length; i++) {
             this.particles[i].update();
-
             if (this.particles[i].life <= 0) {
                 this.particles.splice(i, 1);
                 i--;
