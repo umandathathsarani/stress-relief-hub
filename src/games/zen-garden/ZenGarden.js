@@ -1,20 +1,28 @@
 import Game from '../../core/Game.js';
+
 class Particle {
     constructor(x, y) {
         this.x = x;
         this.y = y;
         this.size = Math.random() * 6 + 2; 
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * -2 - 0.5; 
+
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * -1 - 0.5; 
         this.life = 1.0; 
-        this.decay = Math.random() * 0.02 + 0.01; 
+        this.decay = Math.random() * 0.015 + 0.005; 
+        this.angle = Math.random() * Math.PI * 2;
+        this.spin = (Math.random() - 0.5) * 0.1; 
+        
         const hues = [180, 220, 260];
         this.hue = hues[Math.floor(Math.random() * hues.length)];
     }
 
     update() {
-        this.x += this.speedX;
+        this.angle += this.spin;
+
+        this.x += this.speedX + Math.sin(this.angle) * 0.8;
         this.y += this.speedY;
+        
         this.life -= this.decay;
     }
 
@@ -22,7 +30,7 @@ class Particle {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 15; // Increased glow
         ctx.shadowColor = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
         ctx.fill();
     }
