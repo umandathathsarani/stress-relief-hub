@@ -1,4 +1,5 @@
 import Game from '../../core/Game.js';
+import { playSparkleSound } from '../../utils/audio.js';
 
 class Particle {
     constructor(x, y) {
@@ -43,6 +44,7 @@ export default class ZenGarden extends Game {
         this.particles = [];
         this.mouse = { x: null, y: null, isDrawing: false };
         this.handleResize = this.resize.bind(this);
+        this.soundTimer = 0;
     }
 
     start() {
@@ -97,6 +99,15 @@ export default class ZenGarden extends Game {
     }
 
     update() {
+        if (this.mouse.isDrawing) {
+            this.soundTimer++;
+            if (this.soundTimer % 10 === 0) {
+                playSparkleSound();
+            }
+        } else {
+            this.soundTimer = 0;
+        }
+
         for (let i = 0; i < this.particles.length; i++) {
             this.particles[i].update();
             if (this.particles[i].life <= 0) {
