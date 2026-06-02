@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Relief Hub | Mini-Games</title>
+
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <link rel="icon" type="image/png" href="./assets/img/game-controller.png">
+</head>
+<body>
+    <header class="hub-header">
+        <h1>Stress Relief Hub</h1>
+        <p>Take a deep breath. Choose a module to unwind.</p>
+    </header>
+
+    <main class="game-grid" id="game-grid">
+        <article class="game-card" data-game="bubble-wrap">
+            <div class="card-icon">🫧</div>
+            <h2>Bubble Wrap</h2>
+            <p>Pop the stress away.</p>
+        </article>
+
+        <article class="game-card locked">
+            <div class="card-icon">🌱</div>
+            <h2>Zen Garden</h2>
+            <p>Coming soon...</p>
+        </article>
+        
+        <article class="game-card locked">
+            <div class="card-icon">⚔️</div>
+            <h2>Zen Slicer</h2>
+            <p>Coming soon...</p>
+        </article>
+    </main>
+
+    <script type="module" src="./src/core/Hub.js"></script>
+</body>
+</html>
