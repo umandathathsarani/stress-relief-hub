@@ -1,6 +1,36 @@
 import Game from '../../core/Game.js';
 import { playSliceSound } from '../../utils/audio.js';
 
+class Spark {
+    constructor(x, y, hue) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = (Math.random() - 0.5) * 10;
+        this.speedY = (Math.random() - 0.5) * 10;
+        this.life = 1.0;
+        this.decay = Math.random() * 0.03 + 0.02;
+        this.hue = hue;
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= this.decay;
+        this.size = Math.max(0, this.size - 0.1);
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.life})`;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, ${this.life})`;
+        ctx.fill();
+        ctx.shadowBlur = 0; 
+    }
+}
+
 class Target {
     constructor(canvasWidth, canvasHeight) {
         this.x = Math.random() * (canvasWidth - 100) + 50;
@@ -90,6 +120,7 @@ export default class ZenSlicer extends Game {
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
         this.targets = [];
+        this.sparks = [];
         this.mouse = { x: 0, y: 0, isDown: false, path: [] };
         this.handleResize = this.resize.bind(this);
         this.spawnTimer = 0;
@@ -156,6 +187,10 @@ export default class ZenSlicer extends Game {
             if (dist < target.radius) {
                 target.slice();
                 playSliceSound();
+                
+                for (let i = 0; i < 15; i++) {
+                    this.sparks.push(new Spark(target.x, target.y, target.hue));
+                }
             }
         });
     }
@@ -168,12 +203,18 @@ export default class ZenSlicer extends Game {
 
         for (let i = this.targets.length - 1; i >= 0; i--) {
             this.targets[i].update();
-            
             const target = this.targets[i];
             if (!target.sliced && target.y > this.canvas.height + 100) {
                 this.targets.splice(i, 1);
             } else if (target.sliced && (target.half1.y > this.canvas.height + 100 && target.half2.y > this.canvas.height + 100)) {
                 this.targets.splice(i, 1);
+            }
+        }
+
+        for (let i = this.sparks.length - 1; i >= 0; i--) {
+            this.sparks[i].update();
+            if (this.sparks[i].life <= 0) {
+                this.sparks.splice(i, 1);
             }
         }
     }
@@ -183,6 +224,10 @@ export default class ZenSlicer extends Game {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.targets.forEach(target => target.draw(this.ctx));
+        
+        this.ctx.globalCompositeOperation = 'lighter';
+        this.sparks.forEach(spark => spark.draw(this.ctx));
+        this.ctx.globalCompositeOperation = 'source-over';
 
         if (this.mouse.isDown && this.mouse.path.length > 1) {
             this.ctx.beginPath();
