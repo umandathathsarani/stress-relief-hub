@@ -1,4 +1,5 @@
 import Game from '../../core/Game.js';
+import { playPopSound } from '../../utils/audio.js';
 
 export default class BubbleWrap extends Game {
     constructor(containerId) {
@@ -29,9 +30,11 @@ export default class BubbleWrap extends Game {
     popBubble(bubbleElement) {
         if (bubbleElement.classList.contains('popped')) return;
 
+        playPopSound();
+
         bubbleElement.classList.add('popped');
         this.poppedCount++;
-
+        
         console.log(`Stress relieved: ${this.poppedCount} bubbles popped!`);
     }
 }
