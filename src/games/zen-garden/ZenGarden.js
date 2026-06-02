@@ -1,4 +1,32 @@
 import Game from '../../core/Game.js';
+class Particle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 6 + 2; 
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * -2 - 0.5; 
+        this.life = 1.0; 
+        this.decay = Math.random() * 0.02 + 0.01; 
+        const hues = [180, 220, 260];
+        this.hue = hues[Math.floor(Math.random() * hues.length)];
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= this.decay;
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = `hsla(${this.hue}, 80%, 65%, ${this.life})`;
+        ctx.fill();
+    }
+}
 
 export default class ZenGarden extends Game {
     constructor(containerId) {
@@ -7,6 +35,8 @@ export default class ZenGarden extends Game {
         this.ctx = this.canvas.getContext('2d');
         this.particles = [];
 
+        this.mouse = { x: null, y: null, isDrawing: false };
+        
         this.handleResize = this.resize.bind(this);
     }
 
@@ -14,6 +44,8 @@ export default class ZenGarden extends Game {
         super.start();
         this.initCanvas();
         window.addEventListener('resize', this.handleResize);
+
+        this.setupInteractions();
     }
 
     stop() {
@@ -30,25 +62,53 @@ export default class ZenGarden extends Game {
 
     resize() {
         const rect = this.container.getBoundingClientRect();
+        this.canvas.width = Math.min(rect.width, 1000);
+        this.canvas.height = Math.min(window.innerHeight * 0.7, 600);
+    }
 
-        const width = Math.min(rect.width, 1000);
-        const height = Math.min(window.innerHeight * 0.7, 600);
+    setupInteractions() {
+        this.canvas.addEventListener('pointerdown', (e) => {
+            this.mouse.isDrawing = true;
+            this.updateMousePos(e);
+        });
 
-        this.canvas.width = width;
-        this.canvas.height = height;
+        this.canvas.addEventListener('pointermove', (e) => {
+            if (this.mouse.isDrawing) {
+                this.updateMousePos(e);
+                for (let i = 0; i < 3; i++) {
+                    this.particles.push(new Particle(this.mouse.x, this.mouse.y));
+                }
+            }
+        });
+
+        window.addEventListener('pointerup', () => {
+            this.mouse.isDrawing = false;
+        });
+    }
+
+    updateMousePos(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - rect.left;
+        this.mouse.y = e.clientY - rect.top;
     }
 
     update() {
+        for (let i = 0; i < this.particles.length; i++) {
+            this.particles[i].update();
 
+            if (this.particles[i].life <= 0) {
+                this.particles.splice(i, 1);
+                i--;
+            }
+        }
     }
 
     draw() {
-        this.ctx.fillStyle = 'rgba(26, 26, 36, 0.2)'; 
+        this.ctx.fillStyle = 'rgba(26, 26, 36, 0.15)'; 
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.fillStyle = '#7b7bb3';
-        this.ctx.beginPath();
-        this.ctx.arc(this.canvas.width / 2, this.canvas.height / 2, 50, 0, Math.PI * 2);
-        this.ctx.fill();
+        for (let i = 0; i < this.particles.length; i++) {
+            this.particles[i].draw(this.ctx);
+        }
     }
 }
