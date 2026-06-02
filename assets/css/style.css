@@ -112,3 +112,22 @@ body {
     border-color: var(--text-primary);
     background: rgba(255, 255, 255, 0.1);
 }
+
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+
+    .hub-header h1 {
+        font-size: 2rem;
+    }
+
+    .hub-header p {
+        font-size: 1rem;
+    }
+
+    .game-grid {
+        gap: 1rem;
+        grid-template-columns: 1fr; 
+    }
+}

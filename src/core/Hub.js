@@ -16,13 +16,31 @@ class Hub {
             if (!card || card.classList.contains('locked')) return; 
 
             const gameId = card.dataset.game;
-            this.launchGame(gameId);
+            window.location.hash = gameId;
         });
 
-        this.backBtn.addEventListener('click', () => this.returnToHub());
+        this.backBtn.addEventListener('click', () => {
+            window.location.hash = '';
+        });
+
+        window.addEventListener('hashchange', () => this.handleRouting());
+
+        this.handleRouting();
+    }
+
+    handleRouting() {
+        const hash = window.location.hash.replace('#', '');
+        
+        if (hash) {
+            this.launchGame(hash);
+        } else {
+            this.returnToHub();
+        }
     }
 
     launchGame(gameId) {
+        if (this.activeGameInstance) return; 
+
         this.grid.classList.add('hidden');
         this.gameContainer.classList.remove('hidden');
 
