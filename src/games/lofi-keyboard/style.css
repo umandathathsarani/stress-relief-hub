@@ -1,0 +1,59 @@
+.keyboard-container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 12px;
+    padding: 30px;
+    background-color: #1a1a24;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 80vw;
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 5vh;
+}
+
+.key {
+    background-color: #2a2a35;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    color: #8a8a9e;
+    font-size: 1.2rem;
+    font-family: monospace;
+    font-weight: bold;
+    height: 70px;
+    box-shadow: 0 8px 0 #0f0f15, 0 12px 15px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.key:hover {
+    background-color: #323242;
+    color: #ffffff;
+}
+
+.key:active, .key.pressed {
+    transform: translateY(8px);
+    box-shadow: 0 0px 0 #0f0f15, 0 4px 6px rgba(0,0,0,0.4);
+    background-color: #4a4a65;
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .keyboard-container {
+        width: 95vw;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        padding: 15px;
+    }
+    
+    .key {
+        height: 50px;
+        font-size: 1rem;
+    }
+}
