@@ -150,6 +150,7 @@ export const playSplatSound = () => {
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.1);
 };
+
 export const playRippleSound = () => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const oscillator = audioCtx.createOscillator();
@@ -169,3 +170,40 @@ export const playRippleSound = () => {
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.5);
 };
+
+export const playBreatheCycle = () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 174; 
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+
+    const t0 = audioCtx.currentTime;
+    const tInhale = t0 + 4;
+    const tHold = tInhale + 7;
+    const tExhale = tHold + 8;
+
+    gainNode.gain.setValueAtTime(0, t0);
+
+    gainNode.gain.linearRampToValueAtTime(0.4, tInhale);
+    filter.frequency.linearRampToValueAtTime(600, tInhale);
+
+    gainNode.gain.setValueAtTime(0.4, tHold);
+    filter.frequency.setValueAtTime(600, tHold);
+
+    gainNode.gain.linearRampToValueAtTime(0, tExhale);
+    filter.frequency.linearRampToValueAtTime(200, tExhale);
+
+    oscillator.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start(t0);
+    oscillator.stop(tExhale);
+};
+

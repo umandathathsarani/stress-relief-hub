@@ -6,6 +6,7 @@ import DominoTopple from '../games/domino-topple/DominoTopple.js';
 import SpinArt from '../games/spin-art/SpinArt.js';
 import LofiKeyboard from '../games/lofi-keyboard/LofiKeyboard.js';
 import WaterRipples from '../games/water-ripples/WaterRipples.js';
+import BreathingOrb from '../games/breathing-orb/BreathingOrb.js';
 
 class Hub {
     constructor() {
@@ -67,6 +68,8 @@ class Hub {
             this.activeGameInstance = new LofiKeyboard('active-game');
         } else if (gameId === 'water-ripples') {
             this.activeGameInstance = new WaterRipples('active-game');
+        } else if (gameId === 'breathing-orb') {
+            this.activeGameInstance = new BreathingOrb('active-game');
         }
 
         if (this.activeGameInstance) {
