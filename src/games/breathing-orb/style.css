@@ -18,3 +18,52 @@
         height: 60vh;
     }
 }
+
+.orb-canvas {
+    background-color: #0b0c10;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    width: 80vw;
+    max-width: 1200px;
+    height: 70vh;
+    touch-action: none;
+}
+
+.orb-stop-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.orb-stop-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.orb-stop-btn.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .orb-canvas {
+        width: 95vw;
+        height: 60vh;
+    }
+    .orb-stop-btn {
+        bottom: 20px;
+    }
+}

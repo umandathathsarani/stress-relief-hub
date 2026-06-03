@@ -171,11 +171,20 @@ export const playRippleSound = () => {
     oscillator.stop(audioCtx.currentTime + 0.5);
 };
 
+let activeBreatheOsc = null;
+
 export const playBreatheCycle = () => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    if (activeBreatheOsc) {
+        try { activeBreatheOsc.stop(); } catch(e) {}
+    }
+
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     const filter = audioCtx.createBiquadFilter();
+
+    activeBreatheOsc = oscillator;
 
     oscillator.type = 'sine';
     oscillator.frequency.value = 174; 
@@ -205,6 +214,17 @@ export const playBreatheCycle = () => {
 
     oscillator.start(t0);
     oscillator.stop(tExhale);
+
+    oscillator.onended = () => {
+        if (activeBreatheOsc === oscillator) activeBreatheOsc = null;
+    };
+};
+
+export const stopBreatheCycle = () => {
+    if (activeBreatheOsc) {
+        try { activeBreatheOsc.stop(); } catch(e) {}
+        activeBreatheOsc = null;
+    }
 };
 
 export const playSingingBowl = () => {

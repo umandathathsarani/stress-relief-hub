@@ -1,18 +1,17 @@
 import Game from '../../core/Game.js';
-import { playBreatheCycle } from '../../utils/audio.js';
+import { playBreatheCycle, stopBreatheCycle } from '../../utils/audio.js';
 
 export default class BreathingOrb extends Game {
     constructor(containerId) {
         super(containerId);
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
-        
-        // 4-7-8 Method constants (in frames at 60fps)
+
         this.INHALE_FRAMES = 4 * 60;
         this.HOLD_FRAMES = 7 * 60;
         this.EXHALE_FRAMES = 8 * 60;
         
-        this.state = 'idle'; // idle, inhale, hold, exhale
+        this.state = 'idle';
         this.frameCounter = 0;
         
         this.minRadius = 50;
@@ -25,8 +24,21 @@ export default class BreathingOrb extends Game {
     start() {
         super.start();
         this.container.innerHTML = '';
-        this.container.appendChild(this.canvas);
+
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.style.width = 'fit-content';
+        wrapper.style.margin = '0 auto';
+        
+        this.container.appendChild(wrapper);
+        wrapper.appendChild(this.canvas);
         this.canvas.className = 'orb-canvas';
+
+        this.stopBtn = document.createElement('button');
+        this.stopBtn.textContent = 'Stop';
+        this.stopBtn.className = 'orb-stop-btn hidden';
+        wrapper.appendChild(this.stopBtn);
+
         this.resize();
         window.addEventListener('resize', this.handleResize);
         
@@ -35,11 +47,16 @@ export default class BreathingOrb extends Game {
                 this.startCycle();
             }
         });
+
+        this.stopBtn.addEventListener('click', () => {
+            this.stopCycle();
+        });
     }
 
     stop() {
         super.stop();
         window.removeEventListener('resize', this.handleResize);
+        stopBreatheCycle(); 
     }
 
     resize() {
@@ -47,8 +64,7 @@ export default class BreathingOrb extends Game {
             const rect = this.canvas.getBoundingClientRect();
             this.canvas.width = rect.width || (window.innerWidth * 0.8);
             this.canvas.height = rect.height || (window.innerHeight * 0.7);
-            
-            // Adjust max radius based on mobile screens
+
             this.maxRadius = Math.min(this.canvas.width, this.canvas.height) * 0.35;
         }, 10);
     }
@@ -56,7 +72,16 @@ export default class BreathingOrb extends Game {
     startCycle() {
         this.state = 'inhale';
         this.frameCounter = 0;
+        this.stopBtn.classList.remove('hidden');
         playBreatheCycle();
+    }
+
+    stopCycle() {
+        this.state = 'idle';
+        this.frameCounter = 0;
+        this.currentRadius = this.minRadius;
+        this.stopBtn.classList.add('hidden');
+        stopBreatheCycle();
     }
 
     update() {
@@ -66,7 +91,6 @@ export default class BreathingOrb extends Game {
 
         if (this.state === 'inhale') {
             const progress = this.frameCounter / this.INHALE_FRAMES;
-            // Smooth ease in/out
             const ease = 0.5 - Math.cos(progress * Math.PI) / 2; 
             this.currentRadius = this.minRadius + (this.maxRadius - this.minRadius) * ease;
 
@@ -88,10 +112,10 @@ export default class BreathingOrb extends Game {
             this.currentRadius = this.maxRadius - (this.maxRadius - this.minRadius) * ease;
 
             if (this.frameCounter >= this.EXHALE_FRAMES) {
-                this.state = 'inhale'; // Loop back automatically
+                this.state = 'inhale'; 
                 this.frameCounter = 0;
                 this.currentRadius = this.minRadius;
-                playBreatheCycle(); // Trigger sound for next loop
+                playBreatheCycle(); 
             }
         }
     }
@@ -103,7 +127,6 @@ export default class BreathingOrb extends Game {
         const cx = this.canvas.width / 2;
         const cy = this.canvas.height / 2;
 
-        // Draw glowing orb
         const gradient = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, this.currentRadius);
         gradient.addColorStop(0, 'rgba(102, 252, 241, 0.8)');
         gradient.addColorStop(0.5, 'rgba(69, 162, 158, 0.4)');
@@ -114,7 +137,6 @@ export default class BreathingOrb extends Game {
         this.ctx.fillStyle = gradient;
         this.ctx.fill();
 
-        // Text display
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = '24px sans-serif';
         this.ctx.textAlign = 'center';
