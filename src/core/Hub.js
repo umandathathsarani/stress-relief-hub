@@ -1,6 +1,7 @@
 import BubbleWrap from '../games/bubble-wrap/BubbleWrap.js';
 import ZenGarden from '../games/zen-garden/ZenGarden.js';
 import ZenSlicer from '../games/zen-slicer/ZenSlicer.js';
+import KineticSand from '../games/kinetic-sand/KineticSand.js';
 
 class Hub {
     constructor() {
@@ -52,6 +53,8 @@ class Hub {
             this.activeGameInstance = new ZenGarden('active-game');
         } else if (gameId === 'zen-slicer') {
             this.activeGameInstance = new ZenSlicer('active-game');
+        } else if (gameId === 'kinetic-sand') {
+            this.activeGameInstance = new KineticSand('active-game');
         }
 
         if (this.activeGameInstance) {
