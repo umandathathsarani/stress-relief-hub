@@ -1,0 +1,20 @@
+.ripple-canvas {
+    background-color: #0b1a2a;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    width: 80vw;
+    max-width: 1200px;
+    height: 70vh;
+    touch-action: none;
+}
+
+@media (max-width: 600px) {
+    .ripple-canvas {
+        width: 95vw;
+        height: 60vh;
+    }
+}

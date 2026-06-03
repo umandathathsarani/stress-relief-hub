@@ -5,6 +5,7 @@ import KineticSand from '../games/kinetic-sand/KineticSand.js';
 import DominoTopple from '../games/domino-topple/DominoTopple.js';
 import SpinArt from '../games/spin-art/SpinArt.js';
 import LofiKeyboard from '../games/lofi-keyboard/LofiKeyboard.js';
+import WaterRipples from '../games/water-ripples/WaterRipples.js';
 
 class Hub {
     constructor() {
@@ -64,6 +65,8 @@ class Hub {
             this.activeGameInstance = new SpinArt('active-game');
         } else if (gameId === 'lofi-keyboard') {
             this.activeGameInstance = new LofiKeyboard('active-game');
+        } else if (gameId === 'water-ripples') {
+            this.activeGameInstance = new WaterRipples('active-game');
         }
 
         if (this.activeGameInstance) {
