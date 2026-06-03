@@ -1,4 +1,5 @@
 import Game from '../../core/Game.js';
+import { playSplatSound } from '../../utils/audio.js';
 
 export default class SpinArt extends Game {
     constructor(containerId) {
@@ -12,6 +13,7 @@ export default class SpinArt extends Game {
         this.mouse = { x: 0, y: 0, isDown: false };
         this.hue = Math.random() * 360;
         this.angle = 0;
+        this.soundTimer = 0;
         this.handleResize = this.resize.bind(this);
     }
 
@@ -87,6 +89,11 @@ export default class SpinArt extends Game {
         this.angle += 0.05;
         
         if (this.mouse.isDown) {
+            this.soundTimer++;
+            if (this.soundTimer % 8 === 0) {
+                playSplatSound();
+            }
+
             this.artCtx.beginPath();
             this.artCtx.arc(this.mouse.x, this.mouse.y, Math.random() * 10 + 5, 0, Math.PI * 2);
             this.artCtx.fillStyle = `hsl(${this.hue}, 80%, 60%)`;

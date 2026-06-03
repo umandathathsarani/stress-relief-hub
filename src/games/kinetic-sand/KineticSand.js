@@ -1,4 +1,5 @@
 import Game from '../../core/Game.js';
+import { playSandSound } from '../../utils/audio.js';
 
 export default class KineticSand extends Game {
     constructor(containerId) {
@@ -11,6 +12,7 @@ export default class KineticSand extends Game {
         this.rows = 0;
         this.grid = [];
         this.hue = 200;
+        this.soundTimer = 0;
         
         this.mouse = { x: 0, y: 0, isDown: false };
         this.handleResize = this.resize.bind(this);
@@ -79,6 +81,11 @@ export default class KineticSand extends Game {
 
     update() {
         if (this.mouse.isDown) {
+            this.soundTimer++;
+            if (this.soundTimer % 5 === 0) {
+                playSandSound();
+            }
+
             const col = Math.floor(this.mouse.x / this.gridSize);
             const row = Math.floor(this.mouse.y / this.gridSize);
             const brush = 3;

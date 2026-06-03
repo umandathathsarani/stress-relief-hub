@@ -1,4 +1,5 @@
 import Game from '../../core/Game.js';
+import { playClackSound } from '../../utils/audio.js';
 
 class Domino {
     constructor(x, y, angle) {
@@ -7,6 +8,7 @@ class Domino {
         this.angle = angle;
         this.fallAngle = 0;
         this.state = 0; 
+        this.hasHitNext = false;
         this.hue = Math.random() * 60 + 180; 
     }
 
@@ -90,6 +92,7 @@ export default class DominoTopple extends Game {
 
             if (clickedDomino && clickedDomino.state === 0) {
                 clickedDomino.state = 1;
+                playClackSound();
             } else {
                 this.mouse.isDown = true;
                 this.dominos = []; 
@@ -128,6 +131,11 @@ export default class DominoTopple extends Game {
             this.dominos[i].update();
             
             if (this.dominos[i].state === 1 && this.dominos[i].fallAngle > 0.6) {
+                if (!this.dominos[i].hasHitNext) {
+                    playClackSound();
+                    this.dominos[i].hasHitNext = true;
+                }
+
                 if (i < this.dominos.length - 1 && this.dominos[i + 1].state === 0) {
                     this.dominos[i + 1].state = 1;
                 }
