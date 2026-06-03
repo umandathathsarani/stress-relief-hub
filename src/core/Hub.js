@@ -9,6 +9,7 @@ import WaterRipples from '../games/water-ripples/WaterRipples.js';
 import BreathingOrb from '../games/breathing-orb/BreathingOrb.js';
 import Harmonograph from '../games/harmonograph/Harmonograph.js';
 import FireflyMeadow from '../games/firefly-meadow/FireflyMeadow.js';
+import WindChimes from '../games/wind-chimes/WindChimes.js';
 
 class Hub {
     constructor() {
@@ -16,7 +17,6 @@ class Hub {
         this.gameContainer = document.getElementById('game-container');
         this.backBtn = document.getElementById('back-btn');
         this.activeGameInstance = null;
-        
         this.init();
     }
 
@@ -24,28 +24,17 @@ class Hub {
         this.grid.addEventListener('click', (e) => {
             const card = e.target.closest('.game-card');
             if (!card || card.classList.contains('locked')) return; 
-
-            const gameId = card.dataset.game;
-            window.location.hash = gameId; 
+            window.location.hash = card.dataset.game; 
         });
-
-        this.backBtn.addEventListener('click', () => {
-            window.location.hash = '';
-        });
-
+        this.backBtn.addEventListener('click', () => { window.location.hash = ''; });
         window.addEventListener('hashchange', () => this.handleRouting());
-
         this.handleRouting();
     }
 
     handleRouting() {
         const hash = window.location.hash.replace('#', '');
-        
-        if (hash) {
-            this.launchGame(hash);
-        } else {
-            this.returnToHub();
-        }
+        if (hash) this.launchGame(hash);
+        else this.returnToHub();
     }
 
     launchGame(gameId) {
@@ -65,6 +54,7 @@ class Hub {
         else if (gameId === 'breathing-orb') this.activeGameInstance = new BreathingOrb('active-game');
         else if (gameId === 'harmonograph') this.activeGameInstance = new Harmonograph('active-game');
         else if (gameId === 'firefly-meadow') this.activeGameInstance = new FireflyMeadow('active-game');
+        else if (gameId === 'wind-chimes') this.activeGameInstance = new WindChimes('active-game');
 
         if (this.activeGameInstance) {
             this.activeGameInstance.start();
@@ -77,7 +67,6 @@ class Hub {
             document.getElementById('active-game').innerHTML = '';
             this.activeGameInstance = null;
         }
-
         this.gameContainer.classList.add('hidden');
         this.grid.classList.remove('hidden');
     }

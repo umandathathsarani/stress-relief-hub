@@ -267,3 +267,25 @@ export const playNightSound = () => {
     osc.stop(audioCtx.currentTime + 1.5);
 };
 
+export const playChimeSound = (frequency = 440, intensity = 1) => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    
+    const volume = Math.min(0.4 * intensity, 0.6);
+    
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3.0);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + 3.0);
+};
+
