@@ -3,6 +3,7 @@ import ZenGarden from '../games/zen-garden/ZenGarden.js';
 import ZenSlicer from '../games/zen-slicer/ZenSlicer.js';
 import KineticSand from '../games/kinetic-sand/KineticSand.js';
 import DominoTopple from '../games/domino-topple/DominoTopple.js';
+import SpinArt from '../games/spin-art/SpinArt.js';
 
 class Hub {
     constructor() {
@@ -58,6 +59,8 @@ class Hub {
             this.activeGameInstance = new KineticSand('active-game');
         } else if (gameId === 'domino-topple') {
             this.activeGameInstance = new DominoTopple('active-game');
+        } else if (gameId === 'spin-art') {
+            this.activeGameInstance = new SpinArt('active-game');
         }
 
         if (this.activeGameInstance) {
